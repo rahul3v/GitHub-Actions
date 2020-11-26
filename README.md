@@ -1,5 +1,5 @@
 # GitHub Actions
-GitHub Actions Tests, to help learn action github easily
+GitHub Actions Tests, to help learn github action easily, Just the basics to get you started with some clearity
 
 # The File structure details
 
@@ -20,7 +20,7 @@ Workflows to run `.github/workflows/main.yml`
 ```yaml
 name:GitHub-Action-Name             # GitHub-Action-Name
 
-on : [puch|pull_request|issues]     # When to run
+on : [puch|pull_request|issues]     # When to run, for more use with comma as `[pull_request, issues]`
 
 #OR
 
@@ -42,9 +42,10 @@ on :                                # Schedule at a time to run
 
 jobs:
   example-job:                      # Job tag-name
-  runs-on: ubuntu-latest            # platform to run on
+  runs-on: ubuntu-latest            # platform to run on, options available [ubuntu-latest|windows-latest|macos-latest]
   steps:                            # Steps to follow
-  - uses: actions/checkout@v2       # ACTION to use, defaults can be used from github's 'actions/*' repository as per need
+  - name: Checkout                  # Job Steps-name
+    uses: actions/checkout@v2       # ACTION to use, defaults can be used from github's 'actions/*' repository as per need
   
   - name: Connect to PostgreSQL     # Job Steps-name
     run: node client.js             # SCRIPT to run, direct or via bash scripts
@@ -55,7 +56,24 @@ jobs:
   
   - name: Run build script
     run: ./.github/scripts/hello.sh # location of bash script, to run
-    shell: bash                     # used if running from any bash scripts
+    shell: bash                     # used if running from any bash scripts, for other types, use `[bash|pwsh|python|sh|cmd|powershell]` as per need
+
+  example-job2:
+    runs-on: ubuntu-latest
+    name: A job to say hello
+    steps:
+    - name: Checkout                  # Job Steps-name
+      uses: actions/checkout@v2       # To use the repository's private custom action, you must checkout the repository
+      
+    - name: Hello world action step
+      id: hello-variable              # to access the actions `outputs:` block result, and store in it, here in 'hello-variable'
+      uses: ./.github/actions/action.yml    # custom actions
+      with:                           # to pass any input variables insde your used action file mentioned under `uses:` block
+        input-variable-name: 'data value' 
+        input-variable-name2: 'data value2'
+        
+    - name: Get the output result     # Use the output from the `hello` step
+      run: echo "The output was ${{ steps.hello-variable.outputs.out-variable-name }}"
 ```
 
 ##### Sequential jobs
@@ -79,7 +97,7 @@ jobs:
 
 ```
 #### Remember !
-**WORKFLOWS** runs as per sheduled mentioned (under `on:` block), and uses **actions** (under `use:` block if any) and **scripts** (under `run:` block if any) as needed
+**WORKFLOWS** runs as per sheduled mentioned (under `on:` block), and uses **actions** (under `uses:` block if any) and **scripts** (under `run:` block if any) as needed
 
 <br><br>
 
